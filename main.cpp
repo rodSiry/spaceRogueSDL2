@@ -9,7 +9,7 @@ int main()
 	SDL_Surface* wSf=SDL_GetWindowSurface(win);
 	SDL_Rect source={0,0,512,512};
 	SDL_Rect dest={0,0,0,0};
-	SDL_Surface* sprite=IMG_Load("ship");
+	SDL_Surface* sprite=IMG_Load("13081.png");
 	if(sprite==NULL)
 		cerr<<IMG_GetError()<<endl; 
 	SDL_BlitSurface(sprite, NULL, wSf, &dest);
