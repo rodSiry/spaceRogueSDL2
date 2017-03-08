@@ -22,6 +22,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <SDL/SDL_image.h>
+#include <glm/ext.hpp>
 /*
  * =====================================================================================
  *        Class:  Drawer
@@ -32,8 +33,12 @@ class Drawer
 {
 	public:
 		/* ====================  LIFECYCLE     ======================================= */
-		Drawer (std::string path);                             /* constructor */
+		Drawer (std::string path, SDL_Window* W, SDL_Renderer* RD);                             /* constructor */
+		glm::vec3 Proj(glm::vec3 v);
 		void Draw(int tN, glm::vec3 pos);
+		void DrawS(int tN, glm::vec3 pos);
+		void DrawShp(int tN, glm::vec3 pos);
+		void DrawD();
 		~Drawer();
 		/* ====================  ACCESSORS     ======================================= */
 
@@ -43,8 +48,14 @@ class Drawer
 
 	protected:
 		/* ====================  DATA MEMBERS  ======================================= */
-		SDL_Surface* tile;
-		int tW;	
+		SDL_Renderer* rD;
+		SDL_Window* w;
+		SDL_Texture* tile;
+		SDL_Texture* dam;
+		int tW;
+		int nW;
+		int nH;	
+		glm::mat4 mV;
 	private:
 		/* ====================  DATA MEMBERS  ======================================= */
 
