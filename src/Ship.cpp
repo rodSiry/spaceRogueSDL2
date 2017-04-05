@@ -35,7 +35,7 @@ void Ship::Move()
 	vec3 p=*pos.begin();
 	vec3 rA=normalize(cross(-p, d));
 	dir=rotate(radians(-5.f), rA)*dir;
-	p+=2.f*vec3(dir*vec4(0.,0.,1.,0.));
+	p+=0.2f*vec3(dir*vec4(0.,0.,1.,0.));
 	pos.push_front(p);
 	if(pos.size()>nMaxPos)
 	{

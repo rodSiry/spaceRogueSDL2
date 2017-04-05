@@ -27,6 +27,8 @@ vec3 Drawer::Proj(vec3 v)
 	SDL_Surface* win=SDL_GetWindowSurface(w);
 	int a, b;
 	SDL_GetRendererOutputSize(rD, &a, &b);
+	mat4 P=perspective(45.f,1.f,-50.f,50.f);
+	v=vec3(P*vec4(v, 1.));
 	v.x=(v.x+20.f)/40.f*a;
 	v.y=(20.f-v.y)/40.f*b;
 	return v;
@@ -44,7 +46,7 @@ SDL_Rect RectTexture(SDL_Texture* t)
 	SDL_QueryTexture(t, NULL, NULL, &r.w, &r.h);
 	return r;
 }
-Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), tW(16), w(W), mV(lookAt(vec3(0.,0.,0.),vec3(0.,1.,-1),vec3(0.,1.,0.)))
+Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), tW(16), w(W), mV(lookAt(vec3(0.,0.,0.),vec3(0.,10.,-20),vec3(0.,1.,0.)))
 {
 	SDL_Surface* tl=IMG_Load(path.c_str());
 	SDL_Surface* dm=IMG_Load("grosDamier.png");
@@ -75,7 +77,6 @@ void Drawer::DrawShp(int tN, Ship* shp)
 		vec3 p1S=Proj(vec3(mV*vec4(p1,1.)));
 		vec3 p2S=Proj(vec3(mV*vec4(p2,1.)));
 		SDL_RenderDrawLine(rD,p1S.x,p1S.y,p2S.x,p2S.y);
-		cout<<"lol"<<endl;
 	}	
 	vec3 posP=*q->begin();
 	vec3 pos=posP;

@@ -14,7 +14,7 @@ int main()
 	Drawer d("tile.png", win, pRenderer);	
 	SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
 	vector<Ship> shp;
-	for(int i(0); i<50;i++)
+	for(int i(0); i<5;i++)
 	{		
 		shp.push_back(Ship());
 		shp[i].Move();
@@ -28,7 +28,6 @@ int main()
 		}
 		SDL_RenderPresent(pRenderer);
 		SDL_Delay(10);
-		cout<<" "<<endl;
 		SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(pRenderer);
 		const Uint8 *keys = SDL_GetKeyboardState(NULL);
