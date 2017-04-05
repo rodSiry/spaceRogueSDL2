@@ -1,12 +1,13 @@
 /*
  * =====================================================================================
  *
- *       Filename:  Draw.h
+ *       Filename:  Ship.h
  *
- *    Description:  Classe Drawer
+ *    Description:  Class Ship
+ *
  *
  *        Version:  1.0
- *        Created:  04/03/2017 16:36:07
+ *        Created:  05/04/2017 18:12:37
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,31 +17,25 @@
  * =====================================================================================
  */
 
-#ifndef  DRAW_INC
-#define  DRAW_INC
-#include <SDL2/SDL.h>
-#include <string>
+#ifndef  SHIP_H
+#define SHIP_H
+#include <queue>
 #include <glm/glm.hpp>
-#include <SDL/SDL_image.h>
 #include <glm/ext.hpp>
-#include "Ship.h"
 /*
  * =====================================================================================
- *        Class:  Drawer
- *  Description: SDL blit wrapper 
+ *        Class:  Ship
+ *  Description:  Vaisseau - Variables d'état  
  * =====================================================================================
  */
-class Drawer
+class Ship
 {
 	public:
 		/* ====================  LIFECYCLE     ======================================= */
-		Drawer (std::string path, SDL_Window* W, SDL_Renderer* RD);                             /* constructor */
-		glm::vec3 Proj(glm::vec3 v);
-		void Draw(int tN, glm::vec3 pos);
-		void DrawS(int tN, glm::vec3 pos);
-		void DrawShp(int tN, Ship* shp);
-		void DrawD();
-		~Drawer();
+		Ship ();                             /* constructor */
+		~Ship();
+		void Move();
+		std::deque<glm::vec3>* GetQueue(){return &pos;}
 		/* ====================  ACCESSORS     ======================================= */
 
 		/* ====================  MUTATORS      ======================================= */
@@ -49,17 +44,12 @@ class Drawer
 
 	protected:
 		/* ====================  DATA MEMBERS  ======================================= */
-		SDL_Renderer* rD;
-		SDL_Window* w;
-		SDL_Texture* tile;
-		SDL_Texture* dam;
-		int tW;
-		int nW;
-		int nH;	
-		glm::mat4 mV;
+		std::deque<glm::vec3>pos;
+	 	glm::mat4 dir; 	
+		int nMaxPos=20;
 	private:
 		/* ====================  DATA MEMBERS  ======================================= */
 
-}; /* -----  end of class Drawer  ----- */
+}; /* -----  end of class Ship  ----- */
 
-#endif   /* ----- #ifndef DRAW_INC  ----- */
+#endif     /* -----  not SHIP_H  ----- */
