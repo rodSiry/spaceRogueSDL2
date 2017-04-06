@@ -46,7 +46,7 @@ SDL_Rect RectTexture(SDL_Texture* t)
 	SDL_QueryTexture(t, NULL, NULL, &r.w, &r.h);
 	return r;
 }
-Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), tW(16), w(W), mV(lookAt(vec3(0.,0.,0.),vec3(0.,10.,-20),vec3(0.,1.,0.)))
+Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), mM(mat4(1.0)),tW(16), w(W), mV(lookAt(vec3(0.,0.,0.),vec3(0.,10.,-20),vec3(0.,1.,0.)))
 {
 	SDL_Surface* tl=IMG_Load(path.c_str());
 	SDL_Surface* dm=IMG_Load("grosDamier.png");
@@ -59,9 +59,6 @@ Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), tW(16), w(
 }
 void Drawer::DrawS(int tN, vec3 pos)
 {	
-	
-	pos=vec3(mV*vec4(pos, 1.));
-	pos=Proj(pos);
 	Draw(tN, pos);	
 }
 void Drawer::DrawShp(int tN, Ship* shp)
@@ -74,19 +71,19 @@ void Drawer::DrawShp(int tN, Ship* shp)
 		vec3 p1=*(i+1);
 		vec3 p2=*i;
 		SDL_SetRenderDrawColor(rD, j, j, j, 255);
-		vec3 p1S=Proj(vec3(mV*vec4(p1,1.)));
-		vec3 p2S=Proj(vec3(mV*vec4(p2,1.)));
+		vec3 p1S=Proj(vec3(mV*mM*vec4(p1,1.)));
+		vec3 p2S=Proj(vec3(mV*mM*vec4(p2,1.)));
 		SDL_RenderDrawLine(rD,p1S.x,p1S.y,p2S.x,p2S.y);
 	}	
 	vec3 posP=*q->begin();
 	vec3 pos=posP;
-	posP.y=0.f;
-	DrawS(641, posP);
 	SDL_SetRenderDrawColor(rD, 0, 0, 255, 0);
-	vec3 posS=Proj(vec3(mV*vec4(pos,1.)));
-	vec3 posPS=Proj(vec3(mV*vec4(posP,1.)));
+	vec3 posS=Proj(vec3(mV*mM*vec4(pos,1.)));
+	vec3 posPS=vec3(mM*vec4(posP,1.));
+	posPS.y=0;
+	posPS=Proj(vec3(mV*vec4(posPS, 1.)));
 	SDL_RenderDrawLine(rD,posS.x,posS.y,posPS.x,posPS.y);
-	DrawS(tN, pos);
+	DrawS(tN, posS);
 		
 }
 Drawer::~Drawer()

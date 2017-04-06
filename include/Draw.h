@@ -39,6 +39,8 @@ class Drawer
 		void Draw(int tN, glm::vec3 pos);
 		void DrawS(int tN, glm::vec3 pos);
 		void DrawShp(int tN, Ship* shp);
+		void SetMM(glm::mat4 MM){mM=MM;}
+		glm::mat4 GetMM(){return mM;}
 		void DrawD();
 		~Drawer();
 		/* ====================  ACCESSORS     ======================================= */
@@ -56,6 +58,7 @@ class Drawer
 		int tW;
 		int nW;
 		int nH;	
+		glm::mat4 mM;
 		glm::mat4 mV;
 	private:
 		/* ====================  DATA MEMBERS  ======================================= */

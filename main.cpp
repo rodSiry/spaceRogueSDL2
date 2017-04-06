@@ -14,6 +14,7 @@ int main()
 	Drawer d("tile.png", win, pRenderer);	
 	SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
 	vector<Ship> shp;
+	glm::mat4 mM(1.0);
 	for(int i(0); i<5;i++)
 	{		
 		shp.push_back(Ship());
@@ -38,6 +39,15 @@ int main()
 		if (e.type == SDL_QUIT){
 	 		break; 
 		}
+		if(keys[SDL_SCANCODE_J])
+			mM=rotate(mM, -0.1f, glm::vec3(1.f, 0.f, 0.f));
+		if(keys[SDL_SCANCODE_K])
+			mM=rotate(mM, 0.1f, glm::vec3(1.f, 0.f, 0.f));
+		if(keys[SDL_SCANCODE_H])
+			mM=rotate(mM, -0.1f, glm::vec3(0.f, 0.f, 1.f));
+		if(keys[SDL_SCANCODE_L])
+			mM=rotate(mM, 0.1f, glm::vec3(0.f, 0.f, 1.f));
+		d.SetMM(glm::inverse(mM));
 		if (keys[SDL_SCANCODE_ESCAPE]){
 			SDL_DestroyRenderer(pRenderer);
 			SDL_Quit();
