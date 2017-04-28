@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "include/Ship.h"
+#include "include/Gen.h"
 using namespace std;
 int main()
 {
@@ -14,23 +15,30 @@ int main()
 	Drawer d("tile.png", win, pRenderer);	
 	SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
 	vector<Ship> shp;
-	glm::mat4 mM(1.0);
+	Ship ply(glm::vec3(0.,0.,0.)); 
 	for(int i(0); i<5;i++)
 	{		
 		shp.push_back(Ship());
-		shp[i].Move();
 	}
 	while(true)
 	{	
-		for(int i(0); i<shp.size();i++)
-		{		
-			shp[i].Move();
-		d.DrawShp(60, &shp[i]);
-		}
-		SDL_RenderPresent(pRenderer);
-		SDL_Delay(10);
 		SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(pRenderer);
+		ply.MovePly();
+		d.SetMM(&ply);
+        deque<glm::vec3> particles=genDiscr(*ply.GetQueue()->begin());
+        //deque<glm::vec3> particles=genNaive();
+        for(deque<glm::vec3>::iterator i(particles.begin()); i!=particles.end();++i)
+        {   
+            d.DrawPartDiscr(79, *i);
+        }
+		for(int i(0); i<shp.size();i++)
+		{	
+			shp[i].MoveDiscr(&ply);
+			d.DrawShpDiscr(6*16+6, &shp[i]);
+		}
+		d.DrawShpDiscr(6*16+6, &ply);
+		SDL_RenderPresent(pRenderer);
 		const Uint8 *keys = SDL_GetKeyboardState(NULL);
 		SDL_Event e;
 		do 	
@@ -39,15 +47,6 @@ int main()
 		if (e.type == SDL_QUIT){
 	 		break; 
 		}
-		if(keys[SDL_SCANCODE_J])
-			mM=rotate(mM, -0.1f, glm::vec3(1.f, 0.f, 0.f));
-		if(keys[SDL_SCANCODE_K])
-			mM=rotate(mM, 0.1f, glm::vec3(1.f, 0.f, 0.f));
-		if(keys[SDL_SCANCODE_H])
-			mM=rotate(mM, -0.1f, glm::vec3(0.f, 0.f, 1.f));
-		if(keys[SDL_SCANCODE_L])
-			mM=rotate(mM, 0.1f, glm::vec3(0.f, 0.f, 1.f));
-		d.SetMM(glm::inverse(mM));
 		if (keys[SDL_SCANCODE_ESCAPE]){
 			SDL_DestroyRenderer(pRenderer);
 			SDL_Quit();

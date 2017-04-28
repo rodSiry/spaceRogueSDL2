@@ -1,8 +1,4 @@
-/*
- * =====================================================================================
- *
- *       Filename:  Draw.cpp
- *
+/* * ===================================================================================== *
  *    Description:  class Drawer implementation 
  *
  *        Version:  1.0
@@ -12,26 +8,17 @@
  *
  *         Author:  Rodrigue Siry, rodsiry@gmail.com
  *   Organization:  Ecole supérieure d'électricité
- *
- * =====================================================================================
- */
+ * * ===================================================================================== */ 
 #include <stdlib.h>
 #include "../include/Draw.h"
 #define RECT(a, b, c, d) (SDL_Rect){a,b,c,d} 
 #include <iostream>
 using namespace std;
 using namespace glm;
-vec3 Drawer::Proj(vec3 v)
+vec3 Drawer::Proj(vec4 v)
 {
 	
-	SDL_Surface* win=SDL_GetWindowSurface(w);
-	int a, b;
-	SDL_GetRendererOutputSize(rD, &a, &b);
-	mat4 P=perspective(45.f,1.f,-50.f,50.f);
-	v=vec3(P*vec4(v, 1.));
-	v.x=(v.x+20.f)/40.f*a;
-	v.y=(20.f-v.y)/40.f*b;
-	return v;
+	return vec3(v);
 }
 SDL_Rect Rect(glm::vec3 v)
 {
@@ -40,13 +27,19 @@ SDL_Rect Rect(glm::vec3 v)
 	r.y=v.y;
 	return r;	
 }
+void Drawer::SetMM(Ship* shp)
+{
+
+ 	vec3 pos= *shp->GetQueue()->begin();
+	mM=inverse(translate(mat4(1.f), pos)*shp->GetDir());
+}
 SDL_Rect RectTexture(SDL_Texture* t)
 {
 	SDL_Rect r;
 	SDL_QueryTexture(t, NULL, NULL, &r.w, &r.h);
 	return r;
 }
-Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), mM(mat4(1.0)),tW(16), w(W), mV(lookAt(vec3(0.,0.,0.),vec3(0.,10.,-20),vec3(0.,1.,0.)))
+Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), mM(mat4(1.0)),tW(8), w(W), mV(lookAt(vec3(0.f,40.f,-40.f), vec3(0.f,0.f,0.f),vec3(0.f,1.f,0.f)))
 {
 	SDL_Surface* tl=IMG_Load(path.c_str());
 	SDL_Surface* dm=IMG_Load("grosDamier.png");
@@ -57,56 +50,97 @@ Drawer::Drawer(string path, SDL_Window* W, SDL_Renderer* RD): rD(RD), mM(mat4(1.
 	SDL_FreeSurface(tl);	
 	SDL_FreeSurface(dm);	
 }
-void Drawer::DrawS(int tN, vec3 pos)
+void Drawer::DrawS(int tN, vec3 pos, vec3 Color)
 {	
+	int a, b;
+	SDL_GetRendererOutputSize(rD, &a, &b);
+	pos.x+=a/tW/2;
+	pos.y=b/tW/2-pos.y;
+	pos.y-=pos.z;
+    SDL_SetTextureColorMod(tile, 0, 0, 0);
+    Draw(219, pos);
+    SDL_SetTextureColorMod(tile, Color.x, Color.y, Color.z);
 	Draw(tN, pos);	
 }
-void Drawer::DrawShp(int tN, Ship* shp)
+void Drawer::DrawShpDiscr(int tN, Ship* shp)
 {
 	deque<vec3>* q=shp->GetQueue();
-	int j=255;
-	for(deque<vec3>::iterator i(q->begin()); i!=q->end() && (i+1)!=q->end();++i)
+	for(deque<vec3>::iterator i(++q->begin()); i!=q->end();++i)
 	{
-		j-=255/20;
-		vec3 p1=*(i+1);
-		vec3 p2=*i;
-		SDL_SetRenderDrawColor(rD, j, j, j, 255);
-		vec3 p1S=Proj(vec3(mV*mM*vec4(p1,1.)));
-		vec3 p2S=Proj(vec3(mV*mM*vec4(p2,1.)));
-		SDL_RenderDrawLine(rD,p1S.x,p1S.y,p2S.x,p2S.y);
+		vec3 p1=*i; 
+		vec3 p1S=vec3(mM*vec4(p1,1.f));
+		DrawS(tN, p1S, vec3(50, 0, 0));
 	}	
 	vec3 posP=*q->begin();
 	vec3 pos=posP;
 	SDL_SetRenderDrawColor(rD, 0, 0, 255, 0);
-	vec3 posS=Proj(vec3(mV*mM*vec4(pos,1.)));
-	vec3 posPS=vec3(mM*vec4(posP,1.));
-	posPS.y=0;
-	posPS=Proj(vec3(mV*vec4(posPS, 1.)));
-	SDL_RenderDrawLine(rD,posS.x,posS.y,posPS.x,posPS.y);
-	DrawS(tN, posS);
+	vec3 posS=vec3(mM*vec4(pos,1.));
+	vec4 posPS4=mM*vec4(posP,1.);
+	posPS4.y=0.f;
+	vec3 posPS=vec3(posPS4);
+	int c(normalize((posPS-posS).y));
+	int i(rint(posS.y)+c);
+    if(posPS!=posS)
+        while(abs(i)>1.f)
+        {
+            vec3 posL=posS;
+            posL.y=i;
+            DrawS(179, posL, vec3(50,0,0));
+            i+=c;
+        }
+	DrawS(tN, posS, vec3(255, 0, 0));
 		
 }
-Drawer::~Drawer()
+
+	Drawer::~Drawer()
 {
 	SDL_DestroyTexture(tile);
 }
+void Drawer::DrawPartDiscr(int tN, vec3 pos)
+{
+	SDL_SetRenderDrawColor(rD, 0, 0, 255, 0);
+	vec3 posS=vec3(mM*vec4(pos,1.));
+	vec4 posPS4=mM*vec4(pos,1.);
+	posPS4.y=0;
+	vec3 posPS=vec3(posPS4);
+    int c;
+    if(posS.y==0)
+        c=0;
+    else
+        c=normalize(-posS.y);
+	int i(rint(posS.y));
+    if(abs(posS.x)+abs(posS.y)+abs(posS.z)<3*16)
+    {
+        while(abs(i)>=1)
+        {
+            vec3 posL=posS;
+            posL.y=i;
+            DrawS(179, posL, vec3(0,0, 50));
+            i+=c;
+        }
+        DrawS(42, posPS, vec3(0,0, 50));
+    }
+	DrawS(tN, posS, vec3(0, 0, 255*(32-int(abs(posS.y)))));
+}
+
 void Drawer::Draw(int tN, glm::vec3 pos)
 {
 	int bW=tN%nW;
 	int bH=(tN-bW)/nW;
  	SDL_Rect src=RECT(tW*bW,tW*bH,tW, tW);
-	vec3 p=pos-glm::vec3(tW/2., tW/2., 0.);
+	pos=vec3(rint(pos.x), rint(pos.y), rint(pos.z));
+	vec3 p=tW*pos;
 	SDL_Rect rK=Rect(p);
 	rK.w=tW;
 	rK.h=tW;
-        SDL_RenderCopy(rD,tile,&src,&rK);
+    SDL_RenderCopy(rD,tile,&src,&rK);
 }
 void Drawer::DrawD()
 {
 	vec3 a(-20.f, 0.f,20.f);
 	vec3 b(20.f, 0.f,-20.f);
-	a=Proj(vec3(mV*vec4(a, 1.f)));
-	b=Proj(vec3(mV*vec4(b, 1.f)));
+	a=Proj(vec4(a, 1.f));
+	b=Proj(vec4(b, 1.f));
 	SDL_Rect dest=Rect(a);
 	dest.w=b.x-a.x;
 	dest.h=b.y-a.y;

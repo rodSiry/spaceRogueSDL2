@@ -35,11 +35,13 @@ class Drawer
 	public:
 		/* ====================  LIFECYCLE     ======================================= */
 		Drawer (std::string path, SDL_Window* W, SDL_Renderer* RD);                             /* constructor */
-		glm::vec3 Proj(glm::vec3 v);
+		glm::vec3 Proj(glm::vec4 v);
 		void Draw(int tN, glm::vec3 pos);
-		void DrawS(int tN, glm::vec3 pos);
+		void DrawS(int tN, glm::vec3 pos, glm::vec3 Color=glm::vec3(255,255,255));
 		void DrawShp(int tN, Ship* shp);
-		void SetMM(glm::mat4 MM){mM=MM;}
+		void DrawShpDiscr(int tN, Ship* shp);
+        void DrawPartDiscr(int tN, glm::vec3 pos);
+		void SetMM(Ship* ply);
 		glm::mat4 GetMM(){return mM;}
 		void DrawD();
 		~Drawer();

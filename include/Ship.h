@@ -33,9 +33,14 @@ class Ship
 	public:
 		/* ====================  LIFECYCLE     ======================================= */
 		Ship ();                             /* constructor */
+		Ship (glm::vec3 POS);
 		~Ship();
-		void Move();
+		void MoveRd();
+		void MovePly();
+		void MoveToTrg(Ship* tg);
+		void MoveDiscr(Ship* tg);
 		std::deque<glm::vec3>* GetQueue(){return &pos;}
+		glm::mat4 GetDir(){return dir;}
 		/* ====================  ACCESSORS     ======================================= */
 
 		/* ====================  MUTATORS      ======================================= */
@@ -46,7 +51,7 @@ class Ship
 		/* ====================  DATA MEMBERS  ======================================= */
 		std::deque<glm::vec3>pos;
 	 	glm::mat4 dir; 	
-		int nMaxPos=20;
+		int nMaxPos=3;
 	private:
 		/* ====================  DATA MEMBERS  ======================================= */
 
