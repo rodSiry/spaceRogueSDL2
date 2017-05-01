@@ -51,7 +51,7 @@ class Ship
 		/* ====================  DATA MEMBERS  ======================================= */
 		std::deque<glm::vec3>pos;
 	 	glm::mat4 dir; 	
-		int nMaxPos=3;
+		int nMaxPos=2;
 	private:
 		/* ====================  DATA MEMBERS  ======================================= */
 

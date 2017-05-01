@@ -36,7 +36,7 @@ void Ship::MoveRd()
 }
 void Ship::MovePly()
 {
-	float turn=90.f;
+	float turn=10.f;
 	float speed=1.f;
 	const Uint8* keys=SDL_GetKeyboardState(NULL);
 	if(keys[SDL_SCANCODE_J])
